@@ -14,38 +14,38 @@ import { FaTrophy, FaWhatsapp, FaFacebookSquare } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <section className="bg-black text-white py-8 px-4">
+    <section className="bg-black text-white py-8 px-4 md:h-[30rem]">
       <div className="flex flex-wrap justify-around items-center gap-6 mb-4">
-        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto">
-          <GrDeliver className="text-6xl text-red-600 sm:text-4xl hover:scale-150 transition-all" />
+        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto lg:p-5 group">
+          <GrDeliver className="text-6xl text-red-600 sm:text-4xl group-hover:scale-150 transition-all" />
           <h3 className="font-semibold capitalize text-center text-sm sm:text-base">
             Fast NationWide Delivery
           </h3>
         </span>
 
-        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto">
-          <FaMoneyCheckDollar className="text-6xl text-red-600 sm:text-4xl hover:scale-150 transition-all" />
+        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto group">
+          <FaMoneyCheckDollar className="text-6xl text-red-600 sm:text-4xl group-hover:scale-150 transition-all" />
           <h3 className="font-semibold capitalize text-center text-sm sm:text-base">
             Create an account with AsiDrop and get 10% off
           </h3>
         </span>
 
-        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto">
-          <BiSolidHappyHeartEyes className="text-6xl text-red-600 sm:text-4xl hover:scale-150 transition-all" />
+        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto group">
+          <BiSolidHappyHeartEyes className="text-6xl text-red-600 sm:text-4xl group-hover:scale-150 transition-all" />
           <h3 className="font-semibold capitalize text-center text-sm sm:text-base">
             Be Happy Returns
           </h3>
         </span>
 
-        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto">
-          <FaTrophy className="text-6xl text-red-600 sm:text-4xl hover:scale-150 transition-all" />
+        <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto group">
+          <FaTrophy className="text-6xl text-red-600 sm:text-4xl group-hover:scale-150 transition-all" />
           <h3 className="font-semibold capitalize text-center text-sm sm:text-base">
             Best In Class Warranty
           </h3>
         </span>
       </div>
 
-      <div className="mt-4 border-t-4 pt-4 border-red-600 flex flex-wrap justify-around items-center gap-8">
+      <div className="mt-4 border-t-4 pt-4 lg:pt-20 border-red-600 flex flex-wrap justify-around items-center gap-8">
         <span className="flex flex-col sm:flex-row items-center gap-4 group">
           <Image
             src="/asidrop2.png"
@@ -97,7 +97,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="border-t-4 border-black bg-white text-red-600 p-3 flex items-center justify-center gap-1 mt-4">
+      <div className="border-t-4 border-black bg-white text-red-600 p-3 flex items-center justify-center gap-1 mt-4 lg:mt-16">
         <FaCopyright />
         <h2 className="font-extrabold capitalize">Designed by HonchoLex</h2>
       </div>

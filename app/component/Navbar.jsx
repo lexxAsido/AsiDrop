@@ -32,13 +32,13 @@ const Navbar = () => {
 
         <div className="flex gap-8 font-bold text-white items-center max-md:gap-2">
           <button
-            className="border-4 border-black p-2 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all"
+            className="border-4 border-black p-2 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md"
             aria-label="Sign In"
           >
             <Link href="/signin">Sign In</Link>
           </button>
           <button
-            className="border-4 border-black bg-black p-2 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all"
+            className="border-4 border-black bg-black p-2 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600"
             aria-label="Sign Up"
           >
             <Link href="/signup">Sign Up</Link>

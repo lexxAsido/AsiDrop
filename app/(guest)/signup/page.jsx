@@ -6,7 +6,7 @@ import { FaArrowUpRightFromSquare, FaThumbsUp, FaUser } from "react-icons/fa6";
 const SignUp = () => {
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-100 p-5">
-      <div className="bg-slate-50 px-6 py-10 w-full max-w-md md:max-w-lg lg:max-w-xl rounded-md shadow-2xl shadow-black border-4 border-black mt-10 md:mt-20">
+      <div className="bg-slate-50 px-6 py-10 w-full max-w-md md:max-w-lg lg:max-w-xl rounded-md shadow-2xl shadow-black border-4 border-black mt-20">
         
         <div className="flex justify-center py-6 items-center gap-2">
           <h1 className="font-extrabold text-3xl md:text-4xl text-red-600">Welcome</h1>
