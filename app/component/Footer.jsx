@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { GrDeliver } from "react-icons/gr";
+import { motion } from "framer-motion";
 import {
   FaCopyright,
   FaInstagram,
@@ -14,7 +15,11 @@ import { FaTrophy, FaWhatsapp, FaFacebookSquare } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <section className="bg-black text-white py-8 px-4 md:h-[30rem]">
+    <motion.section 
+    initial={{opacity: 0, scale: 0}}
+    animate={{opacity: 1, scale: 1}}
+    traansition={{type: "tween", duration: 0.2,}}
+    className="bg-black text-white py-8 px-4 md:h-[30rem]">
       <div className="flex flex-wrap justify-around items-center gap-6 mb-4">
         <span className="flex flex-col items-center gap-2 w-1/2 sm:w-auto lg:p-5 group">
           <GrDeliver className="text-6xl text-red-600 sm:text-4xl group-hover:scale-150 transition-all" />
@@ -99,9 +104,9 @@ const Footer = () => {
 
       <div className="border-t-4 border-black bg-white text-red-600 p-3 flex items-center justify-center gap-1 mt-4 lg:mt-16">
         <FaCopyright />
-        <h2 className="font-extrabold capitalize">Designed by HonchoLex</h2>
+        <h2 className="font-extrabold capitalize">Designed by HonchoLex 2024</h2>
       </div>
-    </section>
+    </motion.section>
   );
 };
 

@@ -1,15 +1,31 @@
-import React from 'react';
+
+"use client"
+import React, { useEffect, useState } from "react";
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
 
-const layout = ({children}) => {
+
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebaseConfig";
+
+function Layout({ children }) {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth , (currentUser) => {
+      setUser(currentUser); 
+    });
+
+    return () => unsubscribe(); 
+  }, []);
+
   return (
-    <main>
-        <Navbar/>
-        {children}
-        <Footer/>
-    </main>
+    <>
+      <Navbar user={user} />
+      {children}
+      <Footer/>
+    </>
   );
 }
 
-export default layout;
+export default Layout;
