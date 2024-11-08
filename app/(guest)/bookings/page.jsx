@@ -7,7 +7,6 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebaseApp from '@/firebaseConfig';
 import { FaArrowRight } from 'react-icons/fa6';
 
-
 // Firebase initialization
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
@@ -23,16 +22,15 @@ const validationSchema = Yup.object({
 const Bookings = () => {
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [bookings, setBookings] = useState([]);
-  const [currentUser, setCurrentUser] = useState(null); // State to hold the current user
+  const [currentUser, setCurrentUser] = useState(null);
 
   const handleSubmit = async (values) => {
     try {
       if (currentUser) {
-        const bookingData = { ...values, uid: currentUser.uid }; // Include UID in the booking data
+        const bookingData = { ...values, uid: currentUser.uid };
         await addDoc(collection(db, "bookings"), bookingData);
-
         setConfirmationMessage("Your package has been booked for shipping!");
-        fetchBookings(); // Fetch updated bookings after new booking
+        fetchBookings();
       } else {
         console.error("User not authenticated");
       }
@@ -56,12 +54,9 @@ const Bookings = () => {
   };
 
   useEffect(() => {
-    // Set up the auth state listener to track user authentication status
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
     });
-
-    // Cleanup listener on component unmount
     return () => unsubscribe();
   }, []);
 
@@ -72,7 +67,7 @@ const Bookings = () => {
   }, [currentUser]);
 
   return (
-    <main className="flex items-center justify-center min-h-screen flex-col">
+    <main className="flex items-center justify-center min-h-screen flex-col px-4 sm:px-6 lg:px-8">
       <Formik
         initialValues={{
           pickupLocation: '',
@@ -85,16 +80,18 @@ const Bookings = () => {
         onSubmit={handleSubmit}
       >
         {({ errors, touched }) => (
-          <Form className="bg-slate-50 p-8 rounded-lg max-w-md w-full shadow-lg shadow-black border-4 border-black">
-            <h2 className="text-2xl font-bold mb-6">Schedule Your Shipment</h2>
-            {confirmationMessage && <p className="text-green-600 font-bold mb-4">{confirmationMessage}</p>}
-            {/* Form fields here */}
+          <Form className="bg-slate-50 p-8 mt-20 rounded-lg w-full max-w-lg shadow-lg shadow-black border-4 border-black ">
+            <h2 className="text-2xl font-bold mb-6 text-center">Schedule Your Shipment</h2>
+            {confirmationMessage && (
+              <p className="text-green-600 font-bold mb-4 text-center">{confirmationMessage}</p>
+            )}
+            
             <div className="mb-4">
               <label className="block font-medium">Pickup Location</label>
               <Field
                 type="text"
                 name="pickupLocation"
-                className="w-full p-2 mb-4 border rounded"
+                className="w-full p-2 border rounded"
                 placeholder="Enter pickup location"
               />
               <ErrorMessage name="pickupLocation" component="div" className="text-red-600" />
@@ -105,7 +102,7 @@ const Bookings = () => {
               <Field
                 type="text"
                 name="dropOffLocation"
-                className="w-full p-2 mb-4 border rounded"
+                className="w-full p-2 border rounded"
                 placeholder="Enter drop-off location"
               />
               <ErrorMessage name="dropOffLocation" component="div" className="text-red-600" />
@@ -116,7 +113,7 @@ const Bookings = () => {
               <Field
                 type="text"
                 name="packageSize"
-                className="w-full p-2 mb-4 border rounded"
+                className="w-full p-2 border rounded"
                 placeholder="Enter package size"
               />
               <ErrorMessage name="packageSize" component="div" className="text-red-600" />
@@ -127,7 +124,7 @@ const Bookings = () => {
               <Field
                 type="text"
                 name="packageWeight"
-                className="w-full p-2 mb-4 border rounded"
+                className="w-full p-2 border rounded"
                 placeholder="Enter package weight"
               />
               <ErrorMessage name="packageWeight" component="div" className="text-red-600" />
@@ -135,7 +132,7 @@ const Bookings = () => {
 
             <div className="mb-6">
               <label className="block font-medium">Delivery Type</label>
-              <Field as="select" name="deliveryType" className="w-full p-2 mb-6 border rounded">
+              <Field as="select" name="deliveryType" className="w-full p-2 border rounded">
                 <option value="standard">Standard</option>
                 <option value="express">Express</option>
               </Field>
@@ -144,40 +141,36 @@ const Bookings = () => {
 
             <button
               type="submit"
-              className="w-full font-serif text-xl py-3 bg-red-300 text-white rounded hover:bg-red-600 transition-all duration-300 active:scale-x-75"
+              className="w-full py-3 bg-red-400 text-white rounded hover:bg-red-600 transition duration-300"
             >
               Submit
             </button>
-            <span className='flex items-center mt-4 active:scale-105 transition-all'>
-            <a href='/'
-            >RETURN TO HOMEPAGE 
-            </a>
-            <FaArrowRight/>
-            </span>
 
+            <span className="flex items-center justify-center mt-4 text-sm text-black hover:active:scale-100 font-extrabold">
+              <a href="/">RETURN TO HOMEPAGE </a>
+              <FaArrowRight className="ml-2" />
+            </span>
           </Form>
         )}
       </Formik>
 
-      <div className="bg-[#130404] flex items-center p-5 mt-8">
-        <div className="flex items-center text-white gap-3">
-          <h3 className="text-xl font-bold">Previous Bookings:</h3>
-          {bookings.length > 0 ? (
-            <ul>
-              {bookings.map((booking, index) => (
-                <li key={index} className="flex gap-4">
-                  <p><strong className="text-red-600">Pickup:</strong> {booking.pickupLocation}</p>
-                  <p><strong className="text-red-600">Drop-Off:</strong> {booking.dropOffLocation}</p>
-                  <p><strong className="text-red-600">Size:</strong> {booking.packageSize}</p>
-                  <p><strong className="text-red-600">Weight:</strong> {booking.packageWeight}</p>
-                  <p><strong className="text-red-600">Delivery:</strong> {booking.deliveryType}</p>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-white">No previous bookings. Please book a delivery to see it here.</p>
-          )}
-        </div>
+      <div className="bg-gray-900 text-white p-5 mt-8 w-full max-w-lg rounded-lg my-4">
+        <h3 className="text-xl font-bold mb-4">Previous Bookings:</h3>
+        {bookings.length > 0 ? (
+          <ul className="space-y-4">
+            {bookings.map((booking, index) => (
+              <li key={index} className="text-sm">
+                <p><strong className="text-red-400">Pickup:</strong> {booking.pickupLocation}</p>
+                <p><strong className="text-red-400">Drop-Off:</strong> {booking.dropOffLocation}</p>
+                <p><strong className="text-red-400">Size:</strong> {booking.packageSize}</p>
+                <p><strong className="text-red-400">Weight:</strong> {booking.packageWeight}</p>
+                <p><strong className="text-red-400">Delivery:</strong> {booking.deliveryType}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm">No previous bookings. Please book a delivery to see it here.</p>
+        )}
       </div>
     </main>
   );
