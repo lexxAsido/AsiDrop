@@ -83,10 +83,10 @@ const Navbar = () => {
             <FiLoader className="animate-spin text-4xl m-2 text-red-600" />
           ) : status === "unauthenticated" ? (
             <>
-              <button className="border-4 border-black p-2 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md">
+              <button className="border-4 border-black md:p-2 p-1 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md">
                 <Link href="/signin">Sign In</Link>
               </button>
-              <button className="border-4 border-black bg-black p-2 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600">
+              <button className="border-4 border-black bg-black md:p-2 p-1 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600">
                 <Link href="/signup">Sign Up</Link>
               </button>
             </>

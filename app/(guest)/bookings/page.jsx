@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebaseApp from '@/firebaseConfig';
+import { FaArrowRight } from 'react-icons/fa6';
 
 
 // Firebase initialization
@@ -147,8 +148,12 @@ const Bookings = () => {
             >
               Submit
             </button>
-
-            <button>RETURN TO HOMMEPAGE</button>
+            <span className='flex items-center mt-4 active:scale-105 transition-all'>
+            <a href='/'
+            >RETURN TO HOMEPAGE 
+            </a>
+            <FaArrowRight/>
+            </span>
 
           </Form>
         )}
