@@ -6,9 +6,10 @@ import { Pacifico } from "next/font/google";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { auth } from "../../firebaseConfig";
-import { signOut, onAuthStateChanged } from "firebase/auth";
 import { useRouter } from 'next/navigation';
+import { doc, getDoc } from 'firebase/firestore';
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { db, auth } from "@/firebaseConfig";
 
 const pacifico = Pacifico({
   subsets: ["latin"],
@@ -19,14 +20,31 @@ const Navbar = () => {
   const [status, setStatus] = useState("loading");
   const [user, setUser] = useState(null);
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        setUser(currentUser);
-        setStatus("authenticated");
+        try {
+          const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            console.log("User data:", userData);
+  
+            if (userData.username) {
+              setUser({ ...currentUser, username: userData.username });
+            } else {
+              console.warn("Username not found in Firestore document.");
+              setUser(currentUser); // fallback if no username is found
+            }
+          } else {
+            console.warn("User document not found in Firestore.");
+            setUser(currentUser);
+          }
+          setStatus("authenticated");
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
       } else {
         setUser(null);
         setStatus("unauthenticated");
@@ -34,19 +52,18 @@ const Navbar = () => {
     });
     return () => unsubscribe(); 
   }, []);
+  
 
   const handleSignOut = () => {
     signOut(auth).then(() => {
+      setUser(null); // Clear user state on sign-out
       setStatus("unauthenticated");
       router.push('/'); 
     });
   };
 
   return (
-    <motion.main
-    initial={{ y: -50, opacity: 0 }}
-    animate={{ y: 5, opacity: 1 }}
-    >
+    <motion.main initial={{ y: -50, opacity: 0 }} animate={{ y: 5, opacity: 1 }}>
       <div className="flex justify-between mt-2 mx-3 p-2 shadow-lg backdrop-blur-[1.00rem] fixed left-0 right-0 z-50">
         <span className="flex items-center group">
           <Link href="/">
@@ -63,25 +80,19 @@ const Navbar = () => {
 
         <div className="flex gap-8 font-bold text-white items-center max-md:gap-2">
           {status === "loading" ? (
-            < FiLoader  className="animate-spin text-4xl m-2 text-red-600" />
+            <FiLoader className="animate-spin text-4xl m-2 text-red-600" />
           ) : status === "unauthenticated" ? (
             <>
-              <button
-                className="border-4 border-black p-2 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md"
-                aria-label="Sign In"
-              >
+              <button className="border-4 border-black p-2 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md">
                 <Link href="/signin">Sign In</Link>
               </button>
-              <button
-                className="border-4 border-black bg-black p-2 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600"
-                aria-label="Sign Up"
-              >
+              <button className="border-4 border-black bg-black p-2 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600">
                 <Link href="/signup">Sign Up</Link>
               </button>
             </>
           ) : (
             <>
-              <span className="text-black">Welcome! {user.email}</span>
+              <span className="text-black">Welcome! {user.username || user.email}</span>
               <button
                 onClick={handleSignOut}
                 className="bg-red-600 p-3 hover:bg-black rounded-md active:scale-x-75 transition-all"

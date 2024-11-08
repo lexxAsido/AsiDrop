@@ -12,6 +12,7 @@
     "@expo-google-fonts/montserrat": "^0.2.3",
     "@expo-google-fonts/pacifico": "^0.2.3",
     "firebase": "^9.6.11",
+    "formik": "^2.4.6",
     "framer-motion": "^11.11.11",
     "next": "^15.0.2",
     "next-auth": "^4.24.10",
