@@ -136,42 +136,46 @@ const Navbar = () => {
               </button> */}
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className=" outline-none text-black flex items-center"> 
+                  <DropdownMenuTrigger className=" outline-none text-black flex items-center gap-2"> 
                     Welcome!!
-                  <Avatar className=" bg-red-600 border-4 p-1">
+                  {/* <Avatar className=" bg-red-600 border-4 p-1">
                     
                     <AvatarImage src="/user.png" />
                     <AvatarFallback></AvatarFallback>
                   </Avatar>
-                    
+                     */}
+
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
 
 
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-black text-white">
-                    <DropdownMenuLabel className="text-lg">{user.username || user.email}</DropdownMenuLabel>
+                  <DropdownMenuContent className="bg-black ">
+                    <DropdownMenuLabel className="text-lg text-white">{user.username || user.email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                    <DropdownMenuItem className=" font-bold text-white hover:bg-red-600">
                       <Link href="#">Profile</Link>
                     </DropdownMenuItem>
                     
-                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                    <DropdownMenuItem className="hover:bg-red-600 font-bold text-white">
                       <Link href="/contact">Contact Us</Link>
                       </DropdownMenuItem>
-                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                    <DropdownMenuItem className="hover:bg-red-600 font-bold text-white">
                       <Link href="/about">About Us</Link>
                       </DropdownMenuItem>
-                    <DropdownMenuItem>
-                                  <button
+            
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <button
                               onClick={handleSignOut}
                               disabled={signingOut}
                               className="bg-red-600 p-3 hover:bg-white text-black font-bold hover:text-red-600 rounded-md active:scale-x-75 transition-all group flex gap-2">
                               Sign Out
                               {signingOut && <TbLoader3 className='animate-spin text-2xl text-black group-hover:text-red-600'/>} 
                             </button>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-
             </>
           )}
         </div>
