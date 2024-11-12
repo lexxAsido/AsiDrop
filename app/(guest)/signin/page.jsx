@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { GrLogin } from "react-icons/gr";
 import { motion } from "framer-motion";
 import * as yup from "yup";
+import { TbLoader3 } from "react-icons/tb";
 
 // Define validation schema
 const validationSchema = yup.object().shape({
@@ -24,6 +25,7 @@ const SignIn = () => {
   const [isClient, setIsClient] = useState(false);
   const [errors, setErrors] = useState({});
   const [authError, setAuthError] = useState("");
+  const [ signingIn, setSigningIn ] = useState(false);
   const router = useRouter();
   const auth = getAuth(firebaseApp);
 
@@ -32,6 +34,7 @@ const SignIn = () => {
   }, []);
 
   const handleSignIn = async (e) => {
+    setSigningIn(true);
     e.preventDefault();
 
     // Reset errors
@@ -102,9 +105,11 @@ const SignIn = () => {
 
           <button
             type="submit"
+            disabled={signingIn}
             className="font-serif p-4 border-4 flex justify-center w-full mt-5 bg-red-600 rounded-lg font-extrabold text-white text-xl items-center gap-2 hover:bg-transparent hover:text-black border-black"
           >
             SignIn
+            {signingIn && <TbLoader3 className='animate-spin text-2xl text-black'/>}
           </button>
 
           {authError && <p className="text-red-600 mt-2 text-sm">{authError}</p>}

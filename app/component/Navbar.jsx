@@ -10,6 +10,18 @@ import { useRouter } from 'next/navigation';
 import { doc, getDoc } from 'firebase/firestore';
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { db, auth } from "@/firebaseConfig";
+import { TbLoader3 } from "react-icons/tb";
+import { GrLogin } from "react-icons/gr";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+
 
 const pacifico = Pacifico({
   subsets: ["latin"],
@@ -20,6 +32,8 @@ const Navbar = () => {
   const [status, setStatus] = useState("loading");
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const [signingOut, setSigningOut] = useState(false);
+  
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -54,13 +68,32 @@ const Navbar = () => {
   }, []);
   
 
+  // const handleSignOut = () => {
+  //   setSigningOut(false); // Show loader
+  //   signOut(auth).then(() => {
+  //     setUser(null);
+  //     setStatus("unauthenticated");
+  //     router.push('/');
+  //   }).finally(() => {
+  //     setSigningOut(true); // Hide loader after sign-out completes
+  //   });
+  // };
+
   const handleSignOut = () => {
-    signOut(auth).then(() => {
-      setUser(null); // Clear user state on sign-out
-      setStatus("unauthenticated");
-      router.push('/'); 
-    });
+    setSigningOut(true); // Show loader
+    setTimeout(() => {
+      signOut(auth)
+        .then(() => {
+          setUser(null);
+          setStatus("unauthenticated");
+          router.push('/');
+        })
+        .finally(() => {
+          setSigningOut(false); // Hide loader after sign-out completes
+        });
+    }, 4000); // 4-second delay
   };
+  
 
   return (
     <motion.main initial={{ y: -50, opacity: 0 }} animate={{ y: 5, opacity: 1 }}>
@@ -83,8 +116,9 @@ const Navbar = () => {
             <FiLoader className="animate-spin text-4xl m-2 text-red-600" />
           ) : status === "unauthenticated" ? (
             <>
-              <button className="border-4 border-black md:p-2 p-1 rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md">
-                <Link href="/signin">Sign In</Link>
+              <button className="border-4 border-black md:p-2 p-2 gap-1 flex items-center rounded-md bg-red-600 hover:scale-110 active:scale-105 shadow-black hover:bg-transparent hover:text-red-600 transition-all shadow-md">
+                <Link href="/signin"> Login</Link>
+                <GrLogin className="text-black "/>
               </button>
               <button className="border-4 border-black bg-black md:p-2 p-1 rounded-md hover:scale-110 active:scale-105 shadow-md hover:bg-transparent hover:text-red-600 transition-all shadow-red-600">
                 <Link href="/signup">Sign Up</Link>
@@ -92,13 +126,52 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <span className="text-black">Welcome! {user.username || user.email}</span>
+              {/* <span className="text-black">Welcome! {user.username || user.email}</span>
               <button
                 onClick={handleSignOut}
-                className="bg-red-600 p-3 hover:bg-black rounded-md active:scale-x-75 transition-all"
-              >
+                disabled={signingOut}
+                className="bg-red-600 p-3 hover:bg-black rounded-md active:scale-x-75 transition-all group flex gap-2">
                 Sign Out
-              </button>
+                {signingOut && <TbLoader3 className='animate-spin text-2xl text-black group-hover:text-red-600'/>} 
+              </button> */}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="mx-5 outline-none text-black flex items-center"> 
+                    Welcome!!
+                  <Avatar className=" bg-red-600 border-4 p-1">
+                    
+                    <AvatarImage src="/user.png" />
+                    <AvatarFallback></AvatarFallback>
+                  </Avatar>
+                    
+
+
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="bg-black text-white p-5">
+                    <DropdownMenuLabel className="text-lg">{user.username || user.email}</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                      <Link href="#">Profile</Link>
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                      <Link href="/contact">Contact Us</Link>
+                      </DropdownMenuItem>
+                    <DropdownMenuItem className="hover:bg-red-600 font-bold">
+                      <Link href="/about">About Us</Link>
+                      </DropdownMenuItem>
+                    <DropdownMenuItem>
+                                  <button
+                              onClick={handleSignOut}
+                              disabled={signingOut}
+                              className="bg-red-600 p-3 hover:bg-white text-black font-bold hover:text-red-600 rounded-md active:scale-x-75 transition-all group flex gap-2">
+                              Sign Out
+                              {signingOut && <TbLoader3 className='animate-spin text-2xl text-black group-hover:text-red-600'/>} 
+                            </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
             </>
           )}
         </div>

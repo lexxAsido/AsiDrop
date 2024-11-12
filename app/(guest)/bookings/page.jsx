@@ -5,13 +5,14 @@ import * as Yup from 'yup';
 import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import firebaseApp from '@/firebaseConfig';
-import { FaArrowRight } from 'react-icons/fa6';
+import { FaArrowRight, FaSpinner } from 'react-icons/fa6';
 
-// Firebase initialization
+
 const db = getFirestore(firebaseApp);
 const auth = getAuth(firebaseApp);
 
 const validationSchema = Yup.object({
+  nameOfItem: Yup.string().required('Name of item is required'),
   pickupLocation: Yup.string().required('Pickup location is required'),
   dropOffLocation: Yup.string().required('Drop-off location is required'),
   packageSize: Yup.string().required('Package size is required'),
@@ -23,25 +24,33 @@ const Bookings = () => {
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [bookings, setBookings] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, {resetForm}) => {
+    setSubmitting(true); // Start loading
     try {
       if (currentUser) {
         const bookingData = { ...values, uid: currentUser.uid };
         await addDoc(collection(db, "bookings"), bookingData);
         setConfirmationMessage("Your package has been booked for shipping!");
         fetchBookings();
+        // setTimeout(() => setConfirmationMessage(""), 3000); // Reset after 3 seconds
+        resetForm();
       } else {
         console.error("User not authenticated");
       }
     } catch (error) {
       console.error("Error booking shipment:", error);
+    }  finally {
+      setSubmitting(false); // End loading
     }
   };
 
   const fetchBookings = async () => {
     if (currentUser) {
       try {
+        setLoading(true);
         const bookingsRef = collection(db, "bookings");
         const q = query(bookingsRef, where("uid", "==", currentUser.uid));
         const querySnapshot = await getDocs(q);
@@ -49,13 +58,20 @@ const Bookings = () => {
         setBookings(userBookings);
       } catch (error) {
         console.error("Error fetching bookings:", error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+      if (user) {
+        setCurrentUser(user);
+      } else {
+        setCurrentUser(null);
+        setBookings([]);
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -68,25 +84,38 @@ const Bookings = () => {
 
   return (
     <main className="flex items-center justify-center min-h-screen flex-col px-4 sm:px-6 lg:px-8">
-      <Formik
-        initialValues={{
-          pickupLocation: '',
-          dropOffLocation: '',
-          packageSize: '',
-          packageWeight: '',
-          deliveryType: 'standard',
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ errors, touched }) => (
-          <Form className="bg-slate-50 p-8 mt-20 rounded-lg w-full max-w-lg shadow-lg shadow-black border-4 border-black ">
-            <h2 className="text-2xl font-bold mb-6 text-center">Schedule Your Shipment</h2>
-            {confirmationMessage && (
-              <p className="text-green-600 font-bold mb-4 text-center">{confirmationMessage}</p>
-            )}
-            
-            <div className="mb-4">
+      {currentUser ? (
+        <Formik
+          initialValues={{
+            nameOfItem: '',
+            pickupLocation: '',
+            dropOffLocation: '',
+            packageSize: '',
+            packageWeight: '',
+            deliveryType: 'standard',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ errors, touched }) => (
+            <Form className="bg-slate-50 p-8 mt-20 rounded-lg w-full max-w-lg shadow-lg shadow-black border-4 border-black ">
+              <h2 className="text-2xl font-bold mb-6 text-center">Schedule Your Shipment</h2>
+              {confirmationMessage && (
+                <p className="text-green-600 font-bold mb-4 text-center">{confirmationMessage}</p>
+              )}
+              
+              <div className="mb-4">
+              <label className="block font-medium">Name of Item</label>
+              <Field
+                type="text"
+                name="nameOfItem"
+                className="w-full p-2 border rounded"
+                placeholder="Name of Item"
+              />
+              <ErrorMessage name="pickupLocation" component="div" className="text-red-600" />
+            </div>
+
+              <div className="mb-4">
               <label className="block font-medium">Pickup Location</label>
               <Field
                 type="text"
@@ -138,30 +167,42 @@ const Bookings = () => {
               </Field>
               <ErrorMessage name="deliveryType" component="div" className="text-red-600" />
             </div>
-
+              
             <button
-              type="submit"
-              className="w-full py-3 bg-red-400 text-white rounded hover:bg-red-600 transition duration-300"
-            >
-              Submit
-            </button>
+                type="submit"
+                className="w-full py-3 bg-red-400 text-white rounded hover:bg-red-600 transition duration-300 flex items-center justify-center"
+                disabled={submitting}
+                > Submit
+                {submitting && <FaSpinner className='animate-spin text-2xl bg-black'/>} 
+                
+                
+              </button>
 
-            <span className="flex items-center justify-center mt-4 text-sm text-black hover:active:scale-100 font-extrabold">
-              <a href="/">RETURN TO HOMEPAGE </a>
-              <FaArrowRight className="ml-2" />
-            </span>
-          </Form>
-        )}
-      </Formik>
+             
 
-      <div className="bg-gray-900 text-white p-5 mt-8 w-full max-w-lg rounded-lg my-4">
+              <span className="flex items-center justify-center mt-4 text-sm text-black hover:active:scale-100 font-extrabold">
+                <a href="/">RETURN TO HOMEPAGE </a>
+                <FaArrowRight className="ml-2" />
+              </span>
+            </Form>
+          )}
+        </Formik>
+      ) 
+      : (
+        <p className="text-center text-lg font-bold">Please log in to book a shipment.</p>
+      )
+      }
+
+      <div className="bg-gray-900 text-white p-5 mt-8   rounded-lg my-4 lg:w-[40rem] w-auto">
         <h3 className="text-xl font-bold mb-4">Previous Bookings:</h3>
-        {bookings.length > 0 ? (
+        {loading ? (
+          <p>Loading...</p>
+        ) : bookings.length > 0 ? (
           <ul className="space-y-4">
             {bookings.map((booking, index) => (
-              <li key={index} className="text-sm">
+              <li key={index} className="text-sm flex ">
+                <p><strong className="text-red-400">Name of Item:</strong> {booking.nameOfItem}</p>
                 <p><strong className="text-red-400">Pickup:</strong> {booking.pickupLocation}</p>
-                <p><strong className="text-red-400">Drop-Off:</strong> {booking.dropOffLocation}</p>
                 <p><strong className="text-red-400">Size:</strong> {booking.packageSize}</p>
                 <p><strong className="text-red-400">Weight:</strong> {booking.packageWeight}</p>
                 <p><strong className="text-red-400">Delivery:</strong> {booking.deliveryType}</p>
