@@ -136,7 +136,7 @@ const Navbar = () => {
               </button> */}
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="mx-5 outline-none text-black flex items-center"> 
+                  <DropdownMenuTrigger className=" outline-none text-black flex items-center"> 
                     Welcome!!
                   <Avatar className=" bg-red-600 border-4 p-1">
                     
@@ -147,7 +147,7 @@ const Navbar = () => {
 
 
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="bg-black text-white p-5">
+                  <DropdownMenuContent className="bg-black text-white">
                     <DropdownMenuLabel className="text-lg">{user.username || user.email}</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="hover:bg-red-600 font-bold">
